@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- USERS table -->
+    <changeSet id="1" author="senol">
+
+        <createTable tableName="USERS">
+            <column name="ID" type="NUMBER(19)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="USERNAME" type="VARCHAR2(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="PASSWORD" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="NAME" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ROLE" type="VARCHAR2(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence
+                sequenceName="USERS_SEQ"
+                startValue="1"
+                incrementBy="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="USERS_SEQ"/>
+            <dropTable tableName="USERS"/>
+        </rollback>
+
+    </changeSet>
+
+    <!-- Add email column -->
+    <changeSet id="2" author="senol">
+
+        <addColumn tableName="USERS">
+            <column name="EMAIL" type="VARCHAR2(255)"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="USERS" columnName="EMAIL"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

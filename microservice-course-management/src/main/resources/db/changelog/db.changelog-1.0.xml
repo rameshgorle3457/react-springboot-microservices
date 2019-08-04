@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!-- ========================= -->
+    <!-- COURSES TABLE -->
+    <!-- ========================= -->
+    <changeSet id="1" author="sha">
+
+        <createTable tableName="courses">
+            <column name="id" type="NUMBER(19)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="title" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="author" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="category" type="VARCHAR2(255)"/>
+
+            <column name="publish_date" type="DATE" defaultValueComputed="SYSDATE"/>
+        </createTable>
+
+        <createSequence
+                sequenceName="courses_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="courses_seq"/>
+            <dropTable tableName="courses"/>
+        </rollback>
+    </changeSet>
+
+    <!-- ========================= -->
+    <!-- TRANSACTIONS TABLE -->
+    <!-- ========================= -->
+    <changeSet id="2" author="sha">
+
+        <createTable tableName="transactions">
+            <column name="id" type="NUMBER(19)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="course_id" type="NUMBER(19)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="NUMBER(19)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="date_of_issue" type="TIMESTAMP" defaultValueComputed="SYSTIMESTAMP"/>
+        </createTable>
+
+        <createSequence
+                sequenceName="transactions_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_tran_course"
+                baseTableName="transactions"
+                baseColumnNames="course_id"
+                referencedTableName="courses"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Prevent duplicate enrollments -->
+        <addUniqueConstraint
+                tableName="transactions"
+                columnNames="course_id, user_id"
+                constraintName="uk_course_user"/>
+
+        <rollback>
+            <dropSequence sequenceName="transactions_seq"/>
+            <dropTable tableName="transactions"/>
+        </rollback>
+    </changeSet>
+
+    <!-- ========================= -->
+    <!-- SEED DATA -->
+    <!-- ========================= -->
+    <changeSet id="3" author="sha">
+
+        <insert tableName="courses">
+            <column name="id" valueComputed="courses_seq.NEXTVAL"/>
+            <column name="title" value="Microservices"/>
+            <column name="author" value="Instructor 1"/>
+            <column name="category" value="Programming"/>
+            <column name="publish_date" valueComputed="SYSDATE"/>
+        </insert>
+
+        <insert tableName="courses">
+            <column name="id" valueComputed="courses_seq.NEXTVAL"/>
+            <column name="title" value="Java Programming"/>
+            <column name="author" value="Instructor 2"/>
+            <column name="category" value="Programming"/>
+            <column name="publish_date" valueComputed="SYSDATE"/>
+        </insert>
+
+        <insert tableName="courses">
+            <column name="id" valueComputed="courses_seq.NEXTVAL"/>
+            <column name="title" value="Web Development"/>
+            <column name="author" value="Instructor 3"/>
+            <column name="category" value="Web"/>
+            <column name="publish_date" valueComputed="SYSDATE"/>
+        </insert>
+
+        <insert tableName="courses">
+            <column name="id" valueComputed="courses_seq.NEXTVAL"/>
+            <column name="title" value="Mobile Application"/>
+            <column name="author" value="Instructor 4"/>
+            <column name="category" value="Mobile"/>
+            <column name="publish_date" valueComputed="SYSDATE"/>
+        </insert>
+
+        <insert tableName="courses">
+            <column name="id" valueComputed="courses_seq.NEXTVAL"/>
+            <column name="title" value="Amazon Web Services"/>
+            <column name="author" value="Instructor 5"/>
+            <column name="category" value="Administration"/>
+            <column name="publish_date" valueComputed="SYSDATE"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="courses"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

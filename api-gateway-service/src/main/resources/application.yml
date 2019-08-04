@@ -1,0 +1,65 @@
+# ===============================
+# Server Configuration
+# ===============================
+server:
+  port: 8765
+
+# ===============================
+# Spring Application
+# ===============================
+spring:
+  application:
+    name: gateway-service
+
+  # =============================
+  # Spring Cloud Gateway
+  # =============================
+  cloud:
+    gateway:
+
+      # ---------
+      # Routes
+      # ---------
+      routes:
+
+        # USER SERVICE ROUTE
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+
+        # COURSE SERVICE ROUTE
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/api/course/**
+          filters:
+            - StripPrefix=2
+
+      # --------------------------
+      # Global CORS Configuration
+      # --------------------------
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+# ===============================
+# Eureka Client Configuration
+# ===============================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
